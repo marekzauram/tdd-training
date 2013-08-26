@@ -23,7 +23,6 @@ class SellOneItemTests(unittest.TestCase):
         self.assertEquals("EUR 7.95", display.text)
 
     def test_another_price_found(self):
-        self.skipTest("This does not work just yet")
         display      = Display()
         sales_system = SalesSystem(display)
 
