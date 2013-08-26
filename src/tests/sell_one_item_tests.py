@@ -28,38 +28,25 @@ class Display(object):
 
 
 class SellOneItemTests(unittest.TestCase):
+    def setUp(self):
+        self.display = Display()
+        self.sales_system = SalesSystem(self.display)
+
     def test_price_found(self):
-        display = Display()
-        sales_system = SalesSystem(display)
-
-        sales_system.on_barcode("123")
-
-        self.assertEquals("EUR 7.95", display.text)
+        self.sales_system.on_barcode("123")
+        self.assertEquals("EUR 7.95", self.display.text)
 
     def test_another_price_found(self):
-        display = Display()
-        sales_system = SalesSystem(display)
-
-        sales_system.on_barcode("321")
-
-        self.assertEquals("EUR 10.00", display.text)
+        self.sales_system.on_barcode("321")
+        self.assertEquals("EUR 10.00", self.display.text)
 
     def test_price_not_found(self):
-        display = Display()
-        sales_system = SalesSystem(display)
-
-        sales_system.on_barcode("unknown-barcode")
-
-        self.assertEquals('Price not found for barcode "unknown-barcode"', display.text)
+        self.sales_system.on_barcode("unknown-barcode")
+        self.assertEquals('Price not found for barcode "unknown-barcode"', self.display.text)
 
     def test_empty_barcode(self):
-
-        display = Display()
-        sales_system = SalesSystem(display)
-
-        sales_system.on_barcode("")
-
-        self.assertEquals('Scanning error: empty barcode', display.text)
+        self.sales_system.on_barcode("")
+        self.assertEquals('Scanning error: empty barcode', self.display.text)
 
 
 if __name__ == "__main__":
