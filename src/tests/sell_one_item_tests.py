@@ -7,6 +7,10 @@ class SalesSystem(object):
 
     def on_barcode(self, barcode):
 
+        if '' == barcode:
+            self.display.text = 'Scanning error: empty barcode'
+            return
+
         barcode_to_price_map = {
             '321': "EUR 10.00",
             '123': "EUR 7.95",
@@ -47,6 +51,15 @@ class SellOneItemTests(unittest.TestCase):
         sales_system.on_barcode("unknown-barcode")
 
         self.assertEquals('Price not found for barcode "unknown-barcode"', display.text)
+
+    def test_empty_barcode(self):
+
+        display = Display()
+        sales_system = SalesSystem(display)
+
+        sales_system.on_barcode("")
+
+        self.assertEquals('Scanning error: empty barcode', display.text)
 
 
 if __name__ == "__main__":
