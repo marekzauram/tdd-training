@@ -38,12 +38,13 @@ class SellOneItemTests(unittest.TestCase):
         self.assertEquals("EUR 10.00", self.display.text)
 
     def test_price_not_found(self):
-        sales_system = SalesSystem(self.display, {})
-        sales_system.on_barcode("999")
-        self.assertEquals('Price not found for barcode "999"', self.display.text)
+        sales_system = SalesSystem(self.display, { "anything but unknown-barcode": "EUR 786.23"})
+        sales_system.on_barcode("unknown-barcode")
+        self.assertEquals('Price not found for barcode "unknown-barcode"', self.display.text)
 
     def test_empty_barcode(self):
-        self.sales_system.on_barcode("")
+        sales_system = SalesSystem(self.display, None)
+        sales_system.on_barcode("")
         self.assertEquals('Scanning error: empty barcode', self.display.text)
 
 
