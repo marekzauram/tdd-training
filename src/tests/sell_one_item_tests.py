@@ -12,7 +12,10 @@ class SalesSystem(object):
             '123': "EUR 7.95",
         }
 
-        self.display.text = barcode_to_price_map[barcode]
+        if barcode not in barcode_to_price_map:
+            self.display.text = 'Price not found for barcode "%s"' % barcode
+        else:
+            self.display.text = barcode_to_price_map[barcode]
 
 
 class Display(object):
@@ -36,6 +39,14 @@ class SellOneItemTests(unittest.TestCase):
         sales_system.on_barcode("321")
 
         self.assertEquals("EUR 10.00", display.text)
+
+    def test_price_not_found(self):
+        display = Display()
+        sales_system = SalesSystem(display)
+
+        sales_system.on_barcode("unknown-barcode")
+
+        self.assertEquals('Price not found for barcode "unknown-barcode"', display.text)
 
 
 if __name__ == "__main__":
