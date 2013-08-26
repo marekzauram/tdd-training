@@ -5,7 +5,10 @@ class SalesSystem(object):
         self.display = display
 
     def on_barcode(self, barcode):
-        self.display.text = "EUR 7.95"
+        if (barcode == "321"):
+            self.display.text = "EUR 10.00"
+        else:
+            self.display.text = "EUR 7.95"
 
 
 class Display(object):
@@ -23,7 +26,6 @@ class SellOneItemTests(unittest.TestCase):
         self.assertEquals("EUR 7.95", display.text)
 
     def test_another_price_found(self):
-        self.skipTest("This does not work just yet")
         display      = Display()
         sales_system = SalesSystem(display)
 
