@@ -2,15 +2,11 @@ import unittest
 
 
 class SalesSystem(object):
-    def __init__(self, display):
+    def __init__(self, display, barcode_to_price_map):
         self.display = display
-        self.barcode_to_price_map = {
-            '123': "EUR 7.95",
-            '321': "EUR 10.00",
-        }
+        self.barcode_to_price_map = barcode_to_price_map
 
     def on_barcode(self, barcode):
-
         if '' == barcode:
             self.display.text = 'Scanning error: empty barcode'
             return
@@ -29,7 +25,7 @@ class Display(object):
 class SellOneItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
-        self.sales_system = SalesSystem(self.display)
+        self.sales_system = SalesSystem(self.display, { '123': "EUR 7.95", '321': "EUR 10.00" })
 
     def test_price_found(self):
         self.sales_system.on_barcode("123")
