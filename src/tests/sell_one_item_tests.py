@@ -1,14 +1,18 @@
 import unittest
 
+
 class SalesSystem(object):
     def __init__(self, display):
         self.display = display
 
     def on_barcode(self, barcode):
-        if (barcode == "321"):
-            self.display.text = "EUR 10.00"
-        else:
-            self.display.text = "EUR 7.95"
+
+        barcode_to_price_map = {
+            '321': "EUR 10.00",
+            '123': "EUR 7.95",
+        }
+
+        self.display.text = barcode_to_price_map[barcode]
 
 
 class Display(object):
@@ -18,7 +22,7 @@ class Display(object):
 
 class SellOneItemTests(unittest.TestCase):
     def test_price_found(self):
-        display      = Display()
+        display = Display()
         sales_system = SalesSystem(display)
 
         sales_system.on_barcode("123")
@@ -26,7 +30,7 @@ class SellOneItemTests(unittest.TestCase):
         self.assertEquals("EUR 7.95", display.text)
 
     def test_another_price_found(self):
-        display      = Display()
+        display = Display()
         sales_system = SalesSystem(display)
 
         sales_system.on_barcode("321")
