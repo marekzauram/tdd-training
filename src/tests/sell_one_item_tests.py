@@ -56,9 +56,11 @@ class SellOneItemTests(unittest.TestCase):
         self.sales_system.on_total()
         self.assertEquals('Total: EUR 0.00', self.display.text)
     
-    def test_two_item_total(self):
-        self.sales_system.on_barcode("321")   # 10.00
-        self.sales_system.on_barcode("123")   # 7.95
+    def test_two_item_sale(self):
+        self.sales_system.on_barcode("321")
+        self.assertEquals("EUR 10.00", self.display.text)
+        self.sales_system.on_barcode("123")
+        self.assertEquals("EUR 7.95", self.display.text)
         self.sales_system.on_total()
         self.assertEquals('Total: EUR 17.95', self.display.text)
 
