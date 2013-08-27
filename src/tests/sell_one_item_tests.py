@@ -16,9 +16,12 @@ class SalesSystem(object):
         if barcode not in self.barcode_to_price_map:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
-            self.total = self.total + self.barcode_to_price_map[barcode]['price']
-            self.total_tax = self.total_tax + self.get_tax_amount(self.barcode_to_price_map[barcode]['price'], self.barcode_to_price_map[barcode]['tax'])
-            self.display.display_item(self.barcode_to_price_map[barcode]['price'], self.barcode_to_price_map[barcode]['tax'])
+            item = self.barcode_to_price_map[barcode]
+            
+            self.total     = self.total + item['price']
+            self.total_tax = self.total_tax + self.get_tax_amount(item['price'], item['tax'])
+            
+            self.display.display_item(item['price'], item['tax'])
     
     def get_tax_amount(self, amount, tax):
         if tax == 'GP':
