@@ -2,22 +2,22 @@ import unittest
 
 
 class SalesSystem(object):
-    def __init__(self, display, printer, barcode_to_price_map):
+    def __init__(self, display, printer, product_map):
         self.display   = display
         self.printer   = printer
         self.total     = 0
         self.total_tax = 0
-        self.barcode_to_price_map = barcode_to_price_map
+        self.product_map = product_map
 
     def on_barcode(self, barcode):
         if '' == barcode:
             self.display.text = 'Scanning error: empty barcode'
             return
 
-        if barcode not in self.barcode_to_price_map:
+        if barcode not in self.product_map:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
-            item = self.barcode_to_price_map[barcode]
+            item = self.product_map[barcode]
             
             self.total     = self.total + item['price']
             self.total_tax = self.total_tax + self.get_tax_amount(item['price'], item['tax'])
@@ -60,7 +60,12 @@ class SellOneItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
         self.printer = Printer()
-        self.sales_system = SalesSystem(self.display, self.printer, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
+        
+        products = {
+            '123': {'price': 7.95, 'tax': 'G', 'barcode': '123'},
+            '321': {'price': 10.00, 'tax': 'GP', 'barcode': '321'}
+        }
+        self.sales_system = SalesSystem(self.display, self.printer, products)
 
     def test_price_found(self):
         self.sales_system.on_barcode('123')
@@ -82,7 +87,11 @@ class SellVariableItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
         self.printer = Printer()
-        self.sales_system = SalesSystem(self.display, self.printer, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
+        products = {
+            '123': {'price': 7.95, 'tax': 'G', 'barcode': '123'},
+            '321': {'price': 10.00, 'tax': 'GP', 'barcode': '321'}
+        }
+        self.sales_system = SalesSystem(self.display, self.printer, products)
 
     def test_empty_total(self):
         self.sales_system.on_total()
@@ -120,7 +129,7 @@ class PrintingTests(unittest.TestCase):
         self.printer = Printer()
         
     def test_print_receipt_one_item(self):
-        self.sales_system = SalesSystem(self.display, self.printer, { '777': {'price': 10.00, 'tax': 'G'}})
+        self.sales_system = SalesSystem(self.display, self.printer, { '777': {'price': 10.00, 'tax': 'G', 'barcode': '777'}})
         self.sales_system.on_barcode('777')
         self.sales_system.on_print()
         self.assertEquals(self.printer.content,
