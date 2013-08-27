@@ -53,9 +53,9 @@ class SalesSystem(object):
         self.printer.content = (
             lines +
             'Subtotal %.02f' % (self.total,) + '\n' +
-            'GST 0.80'       + '\n' +
-            'PST 0.00'       + '\n' +
-            'Total: 10.80'   + '\n'
+            'GST %.02f' % (self.total_tax_g) + '\n' +
+            'PST %.02f' % (self.total_tax_p) + '\n' +
+            'Total: %.02f' % (self.total + self.total_tax_g + self.total_tax_p) + '\n'
         )
 
 class Printer(object):
