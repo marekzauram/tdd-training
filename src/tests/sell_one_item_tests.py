@@ -3,8 +3,9 @@ import unittest
 
 class SalesSystem(object):
     def __init__(self, display, barcode_to_price_map):
-        self.display = display
-        self.total   = 0
+        self.display   = display
+        self.total     = 0
+        self.total_tax = 0
         self.barcode_to_price_map = barcode_to_price_map
 
     def on_barcode(self, barcode):
@@ -16,6 +17,7 @@ class SalesSystem(object):
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
             self.total = self.total + self.barcode_to_price_map[barcode]['price']
+            self.total_tax = self.total_tax + self.get_tax_amount(self.barcode_to_price_map[barcode]['price'], self.barcode_to_price_map[barcode]['tax'])
             self.display.display_item(self.barcode_to_price_map[barcode]['price'], self.barcode_to_price_map[barcode]['tax'])
     
     def get_tax_amount(self, amount, tax):
@@ -25,7 +27,7 @@ class SalesSystem(object):
             return amount * 0.08
 
     def on_total(self):
-        self.display.display_total(self.total)
+        self.display.display_total(self.total + self.total_tax)
 
 class Display(object):
     def __init__(self):
@@ -69,11 +71,11 @@ class SellVariableItemTests(unittest.TestCase):
 
     def test_two_item_sale(self):
         self.sales_system.on_barcode('321')
-        self.assertEquals('EUR 10.00 GP', self.display.text)
+        self.assertEquals('EUR 10.00 GP', self.display.text) # 1.30  tax
         self.sales_system.on_barcode('123')
-        self.assertEquals('EUR 7.95 G', self.display.text)
+        self.assertEquals('EUR 7.95 G', self.display.text)   # 0.636 tax 
         self.sales_system.on_total()
-        self.assertEquals('Total: EUR 17.95', self.display.text)
+        self.assertEquals('Total: EUR 19.89', self.display.text)  # rounded up
 
 class TaxTests(unittest.TestCase):
     def test_g_tax(self):
