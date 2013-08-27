@@ -1,11 +1,14 @@
+from datetime import datetime
+
 class SalesSystem(object):
     def __init__(self, display, printer, product_map):
-        self.display   = display
-        self.printer   = printer
-        self.total     = 0
+        self.display     = display
+        self.printer     = printer
+        self.total       = 0
         self.total_tax_g = 0
         self.total_tax_p = 0
-        self.basket    = []
+        self.basket      = []
+        self.sales       = []
         self.product_map = product_map
 
     def on_barcode(self, barcode):
@@ -43,6 +46,7 @@ class SalesSystem(object):
         self.display.display_total(self.total + self.total_tax_g + self.total_tax_p)
     
     def reset(self):
+        
         self.basket      = []
         self.total       = 0
         self.total_tax_g = 0
@@ -62,6 +66,30 @@ class SalesSystem(object):
         )
         self.reset()
 
+    def save_sale(self, timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')):
+        self.sales.append({
+            'date'     : timestamp,
+            'subtotal' : self.total,
+            'gst'      : self.total_tax_g,
+            'pst'      : self.total_tax_p,
+            'total'    : self.total + self.total_tax_g + self.total_tax_p
+        })
+        
+    def get_sales_report(self, current_time):
+        report = 'Sales report at %s' % current_time + '\n'
+        report = report + '"Date", "Subtotal", "GST", "PST", "Total"' + '\n'
+        totals = {'subtotal': 0, 'gst': 0, 'pst': 0, 'total': 0}
+        for sale in self.sales:
+            totals['subtotal'] = totals['subtotal'] + sale['subtotal']
+            totals['gst']      = totals['gst']      + sale['gst']
+            totals['pst']      = totals['pst']      + sale['pst']
+            totals['total']    = totals['total']    + sale['total']
+            report += '"%(date)s", "%(subtotal).2f", "%(gst).2f", "%(pst).2f", "%(total).2f"' % (sale) + '\n'
+        
+        report = report + '"Total", "%(subtotal).2f", "%(gst).2f", "%(pst).2f", "%(total).2f"' % (totals)  + '\n'
+
+        return report
+        
 class Printer(object):
     def __init__(self):
         self.content = None

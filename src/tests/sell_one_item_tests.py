@@ -140,5 +140,36 @@ class PrintingTests(unittest.TestCase):
             'PST 0.00'      + '\n' +
             'Total: 0.00'   + '\n'
         )
+
+class ReportingTests(unittest.TestCase):
+    def test_empty_report(self):
+        sales_system = SalesSystem(None, None, None)
+        current_time = '2013-01-01 12:13'
+        self.assertEquals(sales_system.get_sales_report(current_time),
+            'Sales report at %s' % current_time         + '\n' +
+            '"Date", "Subtotal", "GST", "PST", "Total"' + '\n' +
+            '"Total", "0.00", "0.00", "0.00", "0.00"'   + '\n'
+        )
+
+    def test_one_sale_report(self):
+        products = [
+            {'price': 20.00, 'tax': 'G',  'barcode': '6666'},
+        ]
+        display = Display()
+        printer = Printer()
+        current_time = '2013-12-01 12:13'
+        sales_system = SalesSystem(display, printer, products)
+        sales_system.on_barcode('6666')
+        sales_system.save_sale(current_time)
+        self.assertEquals(sales_system.get_sales_report(current_time),
+            'Sales report at %s' % current_time         + '\n' +
+            '"Date", "Subtotal", "GST", "PST", "Total"' + '\n' +
+            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (current_time, 20.00, 1.60, 0.0, 21.60) + '\n' +
+            '"Total", "20.00", "1.60", "0.00", "21.60"' + '\n'
+        )
+        
+    def test_triple_sale_report(self):
+        pass
+        
 if __name__ == '__main__':
     unittest.main()
