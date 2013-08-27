@@ -17,7 +17,7 @@ class SalesSystem(object):
             self.display.display_item(self.barcode_to_price_map[barcode])
 
     def on_total(self):
-        self.display.text = 'Total: EUR 0.00'
+        self.display.display_total(0)
 
 class Display(object):
     def __init__(self):
