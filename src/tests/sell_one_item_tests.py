@@ -161,6 +161,25 @@ class PrintingTests(unittest.TestCase):
             'PST 0.00'       + '\n' +
             'Total: 10.80'   + '\n'
         )
-        
+    def test_print_receipt_three_items(self):
+        products = [
+            {'price': 20.00, 'tax': 'G',  'barcode': '6666'},
+            {'price': 10.00, 'tax': 'GP', 'barcode': '5555'}
+        ]
+        self.sales_system = SalesSystem(self.display, self.printer, products)
+        self.sales_system.on_barcode('6666')
+        self.sales_system.on_barcode('6666')
+        self.sales_system.on_barcode('5555')
+        self.sales_system.on_print()
+        self.assertEquals(self.printer.content,
+            '6666 20.00 G'    + '\n' +
+            '6666 20.00 G'    + '\n' +
+            '5555 10.00 GP'   + '\n' +
+            'Subtotal 50.00'  + '\n' +
+            'GST 4.00'        + '\n' +
+            'PST 0.50'        + '\n' +
+            'Total: 54.50'    + '\n'
+        )
+
 if __name__ == '__main__':
     unittest.main()
