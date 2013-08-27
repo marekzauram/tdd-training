@@ -17,6 +17,12 @@ class SalesSystem(object):
         else:
             self.total = self.total + self.barcode_to_price_map[barcode]['price']
             self.display.display_item(self.barcode_to_price_map[barcode]['price'], self.barcode_to_price_map[barcode]['tax'])
+    
+    def get_tax_amount(self, amount, tax):
+        if tax == 'GP':
+            return amount * 0.13
+        else:
+            return amount * 0.08
 
     def on_total(self):
         self.display.display_total(self.total)
@@ -69,6 +75,12 @@ class SellVariableItemTests(unittest.TestCase):
         self.sales_system.on_total()
         self.assertEquals('Total: EUR 17.95', self.display.text)
 
+class TaxTests(unittest.TestCase):
+    def test_g_tax(self):
+        self.assertEquals(SalesSystem(None,None).get_tax_amount(10.00, 'G'), 0.80);
+
+    def test_gp_tax(self):
+        self.assertEquals(SalesSystem(None,None).get_tax_amount(10.00, 'GP'), 1.30);
 
 class DisplayTests(unittest.TestCase):
     def test_display_item(self):
