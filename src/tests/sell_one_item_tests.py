@@ -33,6 +33,8 @@ class SalesSystem(object):
     def get_tax_amount(self, amount, tax):
         if tax == 'GP':
             return amount * 0.13
+        elif tax == 'P':
+            return amount * 0.05
         else:
             return amount * 0.08
 
@@ -121,6 +123,9 @@ class TaxTests(unittest.TestCase):
 
     def test_gp_tax(self):
         self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'GP'), 1.30);
+
+    def test_gp_tax(self):
+        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'P'), 0.50);
 
 class DisplayTests(unittest.TestCase):
     def test_display_item(self):
