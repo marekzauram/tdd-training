@@ -15,8 +15,8 @@ class SalesSystem(object):
         if barcode not in self.barcode_to_price_map:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
-            self.total = self.total + self.barcode_to_price_map[barcode]
-            self.display.display_item(self.barcode_to_price_map[barcode])
+            self.total = self.total + self.barcode_to_price_map[barcode]['price']
+            self.display.display_item(self.barcode_to_price_map[barcode]['price'], self.barcode_to_price_map[barcode]['tax'])
 
     def on_total(self):
         self.display.display_total(self.total)
@@ -25,8 +25,8 @@ class Display(object):
     def __init__(self):
         self.text = None
         
-    def display_item(self, price):
-        self.text = 'EUR %.02f' % (price,)
+    def display_item(self, price, tax):
+        self.text = 'EUR %.02f %s' % (price, tax,)
 
     def display_total(self, total):
         self.text = 'Total: EUR %.02f' % (total,)
@@ -34,15 +34,15 @@ class Display(object):
 class SellOneItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
-        self.sales_system = SalesSystem(self.display, { '123': 7.95, '321': 10.00 })
+        self.sales_system = SalesSystem(self.display, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
 
     def test_price_found(self):
         self.sales_system.on_barcode('123')
-        self.assertEquals('EUR 7.95', self.display.text)
+        self.assertEquals('EUR 7.95 G', self.display.text)
 
     def test_another_price_found(self):
         self.sales_system.on_barcode('321')
-        self.assertEquals('EUR 10.00', self.display.text)
+        self.assertEquals('EUR 10.00 GP', self.display.text)
 
     def test_price_not_found(self):
         self.sales_system.on_barcode('999')
@@ -55,7 +55,7 @@ class SellOneItemTests(unittest.TestCase):
 class SellVariableItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
-        self.sales_system = SalesSystem(self.display, { '123': 7.95, '321': 10.00 })
+        self.sales_system = SalesSystem(self.display, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
 
     def test_empty_total(self):
         self.sales_system.on_total()
@@ -63,9 +63,9 @@ class SellVariableItemTests(unittest.TestCase):
 
     def test_two_item_sale(self):
         self.sales_system.on_barcode('321')
-        self.assertEquals('EUR 10.00', self.display.text)
+        self.assertEquals('EUR 10.00 GP', self.display.text)
         self.sales_system.on_barcode('123')
-        self.assertEquals('EUR 7.95', self.display.text)
+        self.assertEquals('EUR 7.95 G', self.display.text)
         self.sales_system.on_total()
         self.assertEquals('Total: EUR 17.95', self.display.text)
 
@@ -73,8 +73,8 @@ class SellVariableItemTests(unittest.TestCase):
 class DisplayTests(unittest.TestCase):
     def test_display_item(self):
         display = Display()
-        display.display_item(25.1)
-        self.assertEquals('EUR 25.10', display.text)
+        display.display_item(25.1, 'G')
+        self.assertEquals('EUR 25.10 G', display.text)
     
     def test_display_total(self):
         display = Display()
