@@ -4,6 +4,7 @@ import unittest
 class SalesSystem(object):
     def __init__(self, display, barcode_to_price_map):
         self.display = display
+        self.total   = 0
         self.barcode_to_price_map = barcode_to_price_map
 
     def on_barcode(self, barcode):
@@ -14,10 +15,11 @@ class SalesSystem(object):
         if barcode not in self.barcode_to_price_map:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
+            self.total = self.total + self.barcode_to_price_map[barcode]
             self.display.display_item(self.barcode_to_price_map[barcode])
 
     def on_total(self):
-        self.display.display_total(0)
+        self.display.display_total(self.total)
 
 class Display(object):
     def __init__(self):
@@ -53,6 +55,13 @@ class SellOneItemTests(unittest.TestCase):
     def test_empty_total(self):
         self.sales_system.on_total()
         self.assertEquals('Total: EUR 0.00', self.display.text)
+    
+    def test_two_item_total(self):
+        self.sales_system.on_barcode("321")   # 10.00
+        self.sales_system.on_barcode("123")   # 7.95
+        self.sales_system.on_total()
+        self.assertEquals('Total: EUR 17.95', self.display.text)
+
 
 class DisplayTests(unittest.TestCase):
     def test_display_item(self):
