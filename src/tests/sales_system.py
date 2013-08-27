@@ -42,6 +42,12 @@ class SalesSystem(object):
     def on_total(self):
         self.display.display_total(self.total + self.total_tax_g + self.total_tax_p)
     
+    def reset(self):
+        self.basket      = []
+        self.total       = 0
+        self.total_tax_g = 0
+        self.total_tax_p = 0
+    
     def on_print(self):
         lines = ''
         for product in self.basket:
@@ -54,6 +60,7 @@ class SalesSystem(object):
             'PST %.02f' % (self.total_tax_p) + '\n' +
             'Total: %.02f' % (self.total + self.total_tax_g + self.total_tax_p) + '\n'
         )
+        self.reset()
 
 class Printer(object):
     def __init__(self):

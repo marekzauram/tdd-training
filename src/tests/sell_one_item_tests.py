@@ -126,5 +126,19 @@ class PrintingTests(unittest.TestCase):
             'Total: 54.50'    + '\n'
         )
 
+    def test_reset_by_printing(self):
+        products = [
+            {'price': 20.00, 'tax': 'G',  'barcode': '6666'},
+        ]
+        self.sales_system = SalesSystem(self.display, self.printer, products)
+        self.sales_system.on_barcode('6666')
+        self.sales_system.on_print()
+        self.sales_system.on_print()
+        self.assertEquals(self.printer.content,
+            'Subtotal 0.00' + '\n' +
+            'GST 0.00'      + '\n' +
+            'PST 0.00'      + '\n' +
+            'Total: 0.00'   + '\n'
+        )
 if __name__ == '__main__':
     unittest.main()
