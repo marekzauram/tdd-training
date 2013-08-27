@@ -52,10 +52,15 @@ class SellOneItemTests(unittest.TestCase):
         self.sales_system.on_barcode('')
         self.assertEquals('Scanning error: empty barcode', self.display.text)
 
+class SellVariableItemTests(unittest.TestCase):
+    def setUp(self):
+        self.display = Display()
+        self.sales_system = SalesSystem(self.display, { '123': 7.95, '321': 10.00 })
+
     def test_empty_total(self):
         self.sales_system.on_total()
         self.assertEquals('Total: EUR 0.00', self.display.text)
-    
+
     def test_two_item_sale(self):
         self.sales_system.on_barcode('321')
         self.assertEquals('EUR 10.00', self.display.text)
