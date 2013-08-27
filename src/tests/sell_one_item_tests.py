@@ -7,6 +7,7 @@ class SalesSystem(object):
         self.printer   = printer
         self.total     = 0
         self.total_tax = 0
+        self.basket    = []
         self.product_map = product_map
 
     def on_barcode(self, barcode):
@@ -22,6 +23,8 @@ class SalesSystem(object):
         if product == None:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
+            self.basket.append(product)
+        
             self.total     = self.total + product['price']
             self.total_tax = self.total_tax + self.get_tax_amount(product['price'], product['tax'])
             
@@ -37,9 +40,13 @@ class SalesSystem(object):
         self.display.display_total(self.total + self.total_tax)
     
     def on_print(self):
+        lines = ''
+        for product in self.basket:
+            lines = lines + '%(barcode)s %(price).02f %(tax)s' % (product) + '\n'
+            
         self.printer.content = (
-            '777 10.00 G'    + '\n' +
-            'Subtotal 10.00' + '\n' +
+            lines +
+            'Subtotal %.02f' % (self.total,) + '\n' +
             'GST 0.80'       + '\n' +
             'PST 0.00'       + '\n' +
             'Total: 10.80'   + '\n'
