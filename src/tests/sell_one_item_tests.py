@@ -16,6 +16,8 @@ class SalesSystem(object):
         else:
             self.display.text = self.barcode_to_price_map[barcode]
 
+    def on_total(self):
+        self.display.text = 'Total: EUR 0.00'
 
 class Display(object):
     def __init__(self):
@@ -42,6 +44,10 @@ class SellOneItemTests(unittest.TestCase):
     def test_empty_barcode(self):
         self.sales_system.on_barcode("")
         self.assertEquals('Scanning error: empty barcode', self.display.text)
+
+    def test_empty_total(self):
+        self.sales_system.on_total()
+        self.assertEquals('Total: EUR 0.00', self.display.text)
 
 
 if __name__ == "__main__":
