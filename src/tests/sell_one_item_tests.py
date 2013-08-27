@@ -6,7 +6,8 @@ class SalesSystem(object):
         self.display   = display
         self.printer   = printer
         self.total     = 0
-        self.total_tax = 0
+        self.total_tax_g = 0
+        self.total_tax_p = 0
         self.basket    = []
         self.product_map = product_map
 
@@ -25,8 +26,9 @@ class SalesSystem(object):
         else:
             self.basket.append(product)
         
-            self.total     = self.total + product['price']
-            self.total_tax = self.total_tax + self.get_tax_amount(product['price'], product['tax'])
+            self.total       = self.total + product['price']
+            self.total_tax_g = self.total_tax_g + self.get_tax_amount(product['price'], product['tax'].replace('P',''))
+            self.total_tax_p = self.total_tax_p + self.get_tax_amount(product['price'], product['tax'].replace('G',''))
             
             self.display.display_item(product['price'], product['tax'])
     
@@ -35,11 +37,13 @@ class SalesSystem(object):
             return amount * 0.13
         elif tax == 'P':
             return amount * 0.05
-        else:
+        elif tax == 'G':
             return amount * 0.08
+        else:
+            return amount * 0.00
 
     def on_total(self):
-        self.display.display_total(self.total + self.total_tax)
+        self.display.display_total(self.total + self.total_tax_g + self.total_tax_p)
     
     def on_print(self):
         lines = ''
@@ -119,13 +123,16 @@ class SellVariableItemTests(unittest.TestCase):
 
 class TaxTests(unittest.TestCase):
     def test_g_tax(self):
-        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'G'), 0.80);
+        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'G'), 0.80)
 
     def test_gp_tax(self):
-        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'GP'), 1.30);
+        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'GP'), 1.30)
 
-    def test_gp_tax(self):
-        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'P'), 0.50);
+    def test_p_tax(self):
+        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'P'), 0.50)
+
+    def test_zero_tax(self):
+        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, ''), 0.00)
 
 class DisplayTests(unittest.TestCase):
     def test_display_item(self):
