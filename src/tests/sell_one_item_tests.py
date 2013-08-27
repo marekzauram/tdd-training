@@ -2,8 +2,9 @@ import unittest
 
 
 class SalesSystem(object):
-    def __init__(self, display, barcode_to_price_map):
+    def __init__(self, display, printer, barcode_to_price_map):
         self.display   = display
+        self.printer   = printer
         self.total     = 0
         self.total_tax = 0
         self.barcode_to_price_map = barcode_to_price_map
@@ -32,6 +33,9 @@ class SalesSystem(object):
     def on_total(self):
         self.display.display_total(self.total + self.total_tax)
 
+class Printer(object):
+    pass
+        
 class Display(object):
     def __init__(self):
         self.text = None
@@ -45,7 +49,8 @@ class Display(object):
 class SellOneItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
-        self.sales_system = SalesSystem(self.display, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
+        self.printer = Printer()
+        self.sales_system = SalesSystem(self.display, self.printer, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
 
     def test_price_found(self):
         self.sales_system.on_barcode('123')
@@ -66,7 +71,8 @@ class SellOneItemTests(unittest.TestCase):
 class SellVariableItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
-        self.sales_system = SalesSystem(self.display, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
+        self.printer = Printer()
+        self.sales_system = SalesSystem(self.display, self.printer, { '123': {'price': 7.95, 'tax': 'G'}, '321': {'price': 10.00, 'tax': 'GP'}})
 
     def test_empty_total(self):
         self.sales_system.on_total()
@@ -82,10 +88,10 @@ class SellVariableItemTests(unittest.TestCase):
 
 class TaxTests(unittest.TestCase):
     def test_g_tax(self):
-        self.assertEquals(SalesSystem(None,None).get_tax_amount(10.00, 'G'), 0.80);
+        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'G'), 0.80);
 
     def test_gp_tax(self):
-        self.assertEquals(SalesSystem(None,None).get_tax_amount(10.00, 'GP'), 1.30);
+        self.assertEquals(SalesSystem(None, None, None).get_tax_amount(10.00, 'GP'), 1.30);
 
 class DisplayTests(unittest.TestCase):
     def test_display_item(self):
@@ -98,5 +104,9 @@ class DisplayTests(unittest.TestCase):
         display.display_total(33.334)
         self.assertEquals('Total: EUR 33.33', display.text)
 
+class PrintingTests(unittest.TestCase):
+    def test_print_receipt(self):
+        pass
+        
 if __name__ == '__main__':
     unittest.main()
