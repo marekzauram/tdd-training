@@ -22,9 +22,12 @@ class SalesSystem(object):
 class Display(object):
     def __init__(self):
         self.text = None
+        
     def display_item(self, price):
         self.text = 'EUR %.02f' % (price,)
 
+    def display_total(self, total):
+        self.text = 'Total: EUR %.02f' % (total,)
 
 class SellOneItemTests(unittest.TestCase):
     def setUp(self):
@@ -56,6 +59,11 @@ class DisplayTests(unittest.TestCase):
         display = Display()
         display.display_item(25.1)
         self.assertEquals('EUR 25.10', display.text)
+    
+    def test_display_total(self):
+        display = Display()
+        display.display_total(33.334)
+        self.assertEquals('Total: EUR 33.33', display.text)
 
 if __name__ == "__main__":
     unittest.main()
