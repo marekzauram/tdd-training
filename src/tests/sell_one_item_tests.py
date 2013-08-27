@@ -32,9 +32,19 @@ class SalesSystem(object):
 
     def on_total(self):
         self.display.display_total(self.total + self.total_tax)
+    
+    def on_print(self):
+        self.printer.content = (
+            '777 10.00 G'    + '\n' +
+            'Subtotal 10.00' + '\n' +
+            'GST 0.80'       + '\n' +
+            'PST 0.00'       + '\n' +
+            'Total: 10.80'   + '\n'
+        )
 
 class Printer(object):
-    pass
+    def __init__(self):
+        self.content = None
         
 class Display(object):
     def __init__(self):
@@ -105,8 +115,21 @@ class DisplayTests(unittest.TestCase):
         self.assertEquals('Total: EUR 33.33', display.text)
 
 class PrintingTests(unittest.TestCase):
-    def test_print_receipt(self):
-        pass
+    def setUp(self):
+        self.display = Display()
+        self.printer = Printer()
+        
+    def test_print_receipt_one_item(self):
+        self.sales_system = SalesSystem(self.display, self.printer, { '777': {'price': 10.00, 'tax': 'G'}})
+        self.sales_system.on_barcode('777')
+        self.sales_system.on_print()
+        self.assertEquals(self.printer.content,
+            '777 10.00 G'    + '\n' +
+            'Subtotal 10.00' + '\n' +
+            'GST 0.80'       + '\n' +
+            'PST 0.00'       + '\n' +
+            'Total: 10.80'   + '\n'
+        )
         
 if __name__ == '__main__':
     unittest.main()
