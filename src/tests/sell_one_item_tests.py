@@ -14,7 +14,7 @@ class SalesSystem(object):
         if barcode not in self.barcode_to_price_map:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
-            self.display.text = self.barcode_to_price_map[barcode]
+            self.display.display_item(self.barcode_to_price_map[barcode])
 
     def on_total(self):
         self.display.text = 'Total: EUR 0.00'
@@ -29,7 +29,7 @@ class Display(object):
 class SellOneItemTests(unittest.TestCase):
     def setUp(self):
         self.display = Display()
-        self.sales_system = SalesSystem(self.display, { '123': "EUR 7.95", '321': "EUR 10.00" })
+        self.sales_system = SalesSystem(self.display, { '123': 7.95, '321': 10.00 })
 
     def test_price_found(self):
         self.sales_system.on_barcode("123")
