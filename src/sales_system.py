@@ -1,4 +1,5 @@
 from datetime import datetime
+from sys import stdin
 
 class Sale(object):
     def __init__(self):
@@ -40,13 +41,13 @@ class SalesSystem(object):
     
     def on_barcode(self, barcode):
         if '' == barcode:
-            self.display.showMessage('Scanning error: empty barcode')
+            self.display.show_message('Scanning error: empty barcode')
             return
 
         product = self.product_catalogue.find_product(barcode)
 
         if product == None:
-            self.display.showMessage('Price not found for barcode "%s"' % barcode)
+            self.display.show_message('Price not found for barcode "%s"' % barcode)
         else:
             gst = self.get_tax_amount(product['price'], product['tax'].replace('P',''))
             pst = self.get_tax_amount(product['price'], product['tax'].replace('G',''))
@@ -124,13 +125,28 @@ class SalesSystem(object):
         
 class Printer(object):
     def __init__(self):
-        self.content = None
+        self.content = ''
+
+    def print_out(self, really_print = True):
+        if self.content != '':
+            if really_print:
+                print '--- PRINTER START ---'
+                print self.content
+                print '---  PRINTER END  ---'
+            self.content = ''
+    
         
 class Display(object):
     def __init__(self):
-        self.text = None
+        self.text = ''
     
-    def showMessage(self, message):
+    def print_out(self, really_print = True):
+        if self.text != '':
+            if really_print:
+                print self.text
+            self.text = ''
+    
+    def show_message(self, message):
         self.text = message
 
     def display_item(self, price, tax):
@@ -138,3 +154,33 @@ class Display(object):
 
     def display_total(self, total):
         self.text = 'Total: EUR %.02f' % (total,)
+
+class InputListener(object):
+    def __init__(self, sales_system):
+        self.sales_system = sales_system
+        
+    def on_input(self, data):
+        if (data == 'T'):
+            self.sales_system.on_total()
+        elif (data == 'P'):
+            self.sales_system.on_print()
+        else:
+           self.sales_system.on_barcode(data)
+
+class SimpleApplication(object):
+    def __init__(self):
+        self.display = Display()
+        self.printer = Printer()        
+        self.sales_system   = SalesSystem(self.display, self.printer, ProductCatalogue([{'price': 10.00, 'tax': 'G', 'barcode': '777'}]))
+        self.input_listener = InputListener(self.sales_system)
+    
+    def work(self):
+        while True:
+            line = stdin.readline().strip()
+            #print "Processing :%s" %(line,)
+            self.input_listener.on_input(line)
+            self.display.print_out()
+            self.printer.print_out()
+        
+if __name__ == '__main__':
+    SimpleApplication().work()

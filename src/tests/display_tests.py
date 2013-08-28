@@ -13,6 +13,12 @@ class DisplayTests(unittest.TestCase):
         display = Display()
         display.display_total(33.334)
         self.assertEquals('Total: EUR 33.33', display.text)
+
+    def test_printout(self):
+        display = Display()
+        display.text = 'i must be deleted after printout'
+        display.print_out(False)
+        self.assertEquals(display.text, '')
         
 if __name__ == '__main__':
     unittest.main()

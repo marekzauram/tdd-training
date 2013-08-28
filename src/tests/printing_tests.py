@@ -68,6 +68,11 @@ class PrintingTests(unittest.TestCase):
             'PST 0.00'      + '\n' +
             'Total: 0.00'   + '\n'
         )
+    
+    def test_printout(self):
+        self.printer.content = 'i must be deleted after printout'
+        self.printer.print_out(False)
+        self.assertEquals(self.printer.content, '')
         
 if __name__ == '__main__':
     unittest.main()
