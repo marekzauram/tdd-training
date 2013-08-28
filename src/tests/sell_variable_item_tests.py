@@ -9,7 +9,7 @@ class SellVariableItemTests(unittest.TestCase):
         self.display = Display()
         self.printer = Printer()
         products = [
-            {'price': 7.95, 'tax': 'G', 'barcode': '123'},
+            {'price': 8.00 , 'tax': 'G', 'barcode': '123'},
             {'price': 10.00, 'tax': 'GP', 'barcode': '321'}
         ]
         self.sales_system = SalesSystem(self.display, self.printer, ProductCatalogue(products))
@@ -22,9 +22,9 @@ class SellVariableItemTests(unittest.TestCase):
         self.sales_system.on_barcode('321')
         self.assertEquals('EUR 10.00 GP', self.display.text) # 1.30  tax
         self.sales_system.on_barcode('123')
-        self.assertEquals('EUR 7.95 G', self.display.text)   # 0.636 tax 
+        self.assertEquals('EUR 8.00 G', self.display.text)   # 0.40 tax 
         self.sales_system.on_total()
-        self.assertEquals('Total: EUR 19.89', self.display.text)  # rounded up
+        self.assertEquals('Total: EUR 19.70', self.display.text)  # rounded up
         
 if __name__ == '__main__':
     unittest.main()

@@ -30,8 +30,8 @@ class ReportingTests(unittest.TestCase):
         self.assertEquals(self.sales_system.get_sales_report(self.current_time),
             'Sales report at %s' % self.current_time         + '\n' +
             '"Date", "Subtotal", "GST", "PST", "Total"' + '\n' +
-            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 20.00, 1.60, 0.0, 21.60) + '\n' +
-            '"Total", "20.00", "1.60", "0.00", "21.60"' + '\n'
+            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 20.00, 1.00, 0.0, 21.00) + '\n' +
+            '"Total", "20.00", "1.00", "0.00", "21.00"' + '\n'
         )
         
     def test_triple_sale_report(self):
@@ -44,10 +44,10 @@ class ReportingTests(unittest.TestCase):
         self.assertEquals(self.sales_system.get_sales_report(self.current_time),
             'Sales report at %s' % self.current_time         + '\n' +
             '"Date", "Subtotal", "GST", "PST", "Total"' + '\n' +
-            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 20.00, 1.60, 0.0, 21.60) + '\n' +
-            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 10.00, 0.80, 0.50, 11.30) + '\n' +
-            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 10.00, 0.80, 0.50, 11.30) + '\n' +
-            '"Total", "40.00", "3.20", "1.00", "44.20"' + '\n'
+            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 20.00, 1.00, 0.0 , 21.00) + '\n' +
+            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 10.00, 0.50, 0.80, 11.30) + '\n' +
+            '"%s", "%.2f", "%.2f", "%.2f", "%.2f"' % (self.current_time, 10.00, 0.50, 0.80, 11.30) + '\n' +
+            '"Total", "40.00", "2.00", "1.60", "43.60"' + '\n'
         )
         
 if __name__ == '__main__':

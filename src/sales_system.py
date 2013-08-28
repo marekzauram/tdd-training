@@ -57,14 +57,13 @@ class SalesSystem(object):
             self.display.display_item(product['price'], product['tax'])
     
     def get_tax_amount(self, amount, tax):
-        if tax == 'GP':
-            return amount * 0.13
-        elif tax == 'P':
-            return amount * 0.05
+        if tax == 'P':
+            amount = amount * 0.08
         elif tax == 'G':
-            return amount * 0.08
+            amount = amount * 0.05
         else:
-            return amount * 0.00
+            amount = 0
+        return round(amount, 2)
 
     def on_total(self):
         self.display.display_total(self.sale.get_total())
@@ -171,7 +170,9 @@ class SimpleApplication(object):
     def __init__(self):
         self.display = Display()
         self.printer = Printer()        
-        self.sales_system   = SalesSystem(self.display, self.printer, ProductCatalogue([{'price': 10.00, 'tax': 'G', 'barcode': '777'}]))
+        self.sales_system   = SalesSystem(self.display, self.printer, ProductCatalogue(
+            [{'price': 10.00, 'tax': 'G', 'barcode': '078787987173'}])
+        )
         self.input_listener = InputListener(self.sales_system)
     
     def work(self):

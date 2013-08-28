@@ -16,9 +16,9 @@ class PrintingTests(unittest.TestCase):
         self.assertEquals(self.printer.content,
             '777 10.00 G'    + '\n' +
             'Subtotal 10.00' + '\n' +
-            'GST 0.80'       + '\n' +
+            'GST 0.50'       + '\n' +
             'PST 0.00'       + '\n' +
-            'Total: 10.80'   + '\n'
+            'Total: 10.50'   + '\n'
         )
         
     def test_print_receipt_zero_items(self):
@@ -49,9 +49,9 @@ class PrintingTests(unittest.TestCase):
             '6666 20.00 G'    + '\n' +
             '5555 10.00 GP'   + '\n' +
             'Subtotal 50.00'  + '\n' +
-            'GST 4.00'        + '\n' +
-            'PST 0.50'        + '\n' +
-            'Total: 54.50'    + '\n'
+            'GST 2.50'        + '\n' +
+            'PST 0.80'        + '\n' +
+            'Total: 53.30'    + '\n'
         )
 
     def test_reset_by_printing(self):
