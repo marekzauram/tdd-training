@@ -40,13 +40,13 @@ class SalesSystem(object):
     
     def on_barcode(self, barcode):
         if '' == barcode:
-            self.display.text = 'Scanning error: empty barcode'
+            self.display.showMessage('Scanning error: empty barcode')
             return
 
         product = self.product_catalogue.find_product(barcode)
 
         if product == None:
-            self.display.text = 'Price not found for barcode "%s"' % barcode
+            self.display.showMessage('Price not found for barcode "%s"' % barcode)
         else:
             gst = self.get_tax_amount(product['price'], product['tax'].replace('P',''))
             pst = self.get_tax_amount(product['price'], product['tax'].replace('G',''))
@@ -129,7 +129,10 @@ class Printer(object):
 class Display(object):
     def __init__(self):
         self.text = None
-        
+    
+    def showMessage(self, message):
+        self.text = message
+
     def display_item(self, price, tax):
         self.text = 'EUR %.02f %s' % (price, tax,)
 
