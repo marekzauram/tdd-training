@@ -1,15 +1,28 @@
 from datetime import datetime
 
+class Sale(object):
+    def __init__(self):
+        self.subtotal = 0
+        self.gst      = 0
+        self.pst      = 0
+        self.products = []
+
+    def add_product(self, product, price, gst, pst):
+        self.subtotal = self.subtotal + price
+        self.gst = self.gst + gst
+        self.pst = self.pst + pst
+        self.products.append(product)
+
+    def get_total(self):
+        return self.subtotal + self.gst + self.pst
+
 class SalesSystem(object):
     def __init__(self, display, printer, product_map):
         self.display     = display
         self.printer     = printer
-        self.total       = 0
-        self.total_tax_g = 0
-        self.total_tax_p = 0
-        self.basket      = []
         self.sales       = []
         self.product_map = product_map
+        self.sale        = Sale()
 
     def on_barcode(self, barcode):
         if '' == barcode:
@@ -24,11 +37,10 @@ class SalesSystem(object):
         if product == None:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:
-            self.basket.append(product)
-        
-            self.total       = self.total + product['price']
-            self.total_tax_g = self.total_tax_g + self.get_tax_amount(product['price'], product['tax'].replace('P',''))
-            self.total_tax_p = self.total_tax_p + self.get_tax_amount(product['price'], product['tax'].replace('G',''))
+            gst = self.get_tax_amount(product['price'], product['tax'].replace('P',''))
+            pst = self.get_tax_amount(product['price'], product['tax'].replace('G',''))
+
+            self.sale.add_product(product, product['price'], gst, pst)
             
             self.display.display_item(product['price'], product['tax'])
     
@@ -43,37 +55,34 @@ class SalesSystem(object):
             return amount * 0.00
 
     def on_total(self):
-        self.display.display_total(self.total + self.total_tax_g + self.total_tax_p)
+        self.display.display_total(self.sale.get_total())
     
     def reset(self):
-        self.basket      = []
-        self.total       = 0
-        self.total_tax_g = 0
-        self.total_tax_p = 0
+        self.sale = Sale()
     
     def save_sale(self, timestamp = None):
         if timestamp is None:
             timestamp = self.get_current_datetime()
         self.sales.append({
             'date'     : timestamp,
-            'subtotal' : self.total,
-            'gst'      : self.total_tax_g,
-            'pst'      : self.total_tax_p,
-            'total'    : self.total + self.total_tax_g + self.total_tax_p
+            'subtotal' : self.sale.subtotal,
+            'gst'      : self.sale.gst,
+            'pst'      : self.sale.pst,
+            'total'    : self.sale.get_total()
         })
         self.reset()
 
     def on_print(self):
         lines = ''
-        for product in self.basket:
+        for product in self.sale.products:
             lines = lines + '%(barcode)s %(price).02f %(tax)s' % (product) + '\n'
             
         self.printer.content = (
             lines +
-            'Subtotal %.02f' % (self.total,) + '\n' +
-            'GST %.02f' % (self.total_tax_g) + '\n' +
-            'PST %.02f' % (self.total_tax_p) + '\n' +
-            'Total: %.02f' % (self.total + self.total_tax_g + self.total_tax_p) + '\n'
+            'Subtotal %.02f' % (self.sale.subtotal,) + '\n' +
+            'GST %.02f' % (self.sale.gst) + '\n' +
+            'PST %.02f' % (self.sale.pst) + '\n' +
+            'Total: %.02f' % (self.sale.get_total()) + '\n'
         )
         self.save_sale()
     
