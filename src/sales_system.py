@@ -17,24 +17,34 @@ class Sale(object):
     def get_total(self):
         return self.subtotal + self.gst + self.pst
 
-class SalesSystem(object):
-    def __init__(self, display, printer, product_map):
-        self.display     = display
-        self.printer     = printer
-        self.sales       = []
+class ProductCatalogue(object):
+    def __init__(self, product_map):
         self.product_map = product_map
-        self.sale        = Sale()
 
-    def on_barcode(self, barcode):
-        if '' == barcode:
-            self.display.text = 'Scanning error: empty barcode'
-            return
-
+    def find_product(self, barcode):
         product = None
         for x in self.product_map:
             if x['barcode'] == barcode:
                 product = x
                 break
+        return product
+
+class SalesSystem(object):
+    def __init__(self, display, printer, product_catalogue):
+        self.display     = display
+        self.printer     = printer
+        self.sales       = []
+        self.sale        = Sale()
+
+        self.product_catalogue = product_catalogue
+    
+    def on_barcode(self, barcode):
+        if '' == barcode:
+            self.display.text = 'Scanning error: empty barcode'
+            return
+
+        product = self.product_catalogue.find_product(barcode)
+
         if product == None:
             self.display.text = 'Price not found for barcode "%s"' % barcode
         else:

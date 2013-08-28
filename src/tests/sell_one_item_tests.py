@@ -2,6 +2,7 @@ import unittest
 from sales_system import SalesSystem
 from sales_system import Printer
 from sales_system import Display
+from sales_system import ProductCatalogue
 
 class SellOneItemTests(unittest.TestCase):
     def setUp(self):
@@ -12,7 +13,7 @@ class SellOneItemTests(unittest.TestCase):
             {'price': 7.95, 'tax': 'G', 'barcode': '123'},
             {'price': 10.00, 'tax': 'GP', 'barcode': '321'}
         ]
-        self.sales_system = SalesSystem(self.display, self.printer, products)
+        self.sales_system = SalesSystem(self.display, self.printer, ProductCatalogue(products))
 
     def test_price_found(self):
         self.sales_system.on_barcode('123')

@@ -2,17 +2,18 @@ import unittest
 from sales_system import SalesSystem
 from sales_system import Printer
 from sales_system import Display
+from sales_system import ProductCatalogue
 
 class ReportingTests(unittest.TestCase):
     def setUp(self):
-        self.products = [
+        products = [
             {'price': 20.00, 'tax': 'G',  'barcode': '6666'},
             {'price': 10.00, 'tax': 'GP', 'barcode': '5555'},
         ]
         self.display = Display()
         self.printer = Printer()
         self.current_time = '2013-12-01 12:13'
-        self.sales_system = SalesSystem(self.display, self.printer, self.products)
+        self.sales_system = SalesSystem(self.display, self.printer, ProductCatalogue(products))
 
     def test_empty_report(self):
         sales_system = SalesSystem(None, None, None)

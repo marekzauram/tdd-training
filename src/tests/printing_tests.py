@@ -2,6 +2,7 @@ import unittest
 from sales_system import SalesSystem
 from sales_system import Printer
 from sales_system import Display
+from sales_system import ProductCatalogue
 
 class PrintingTests(unittest.TestCase):
     def setUp(self):
@@ -9,7 +10,7 @@ class PrintingTests(unittest.TestCase):
         self.printer = Printer()
         
     def test_print_receipt_one_item(self):
-        self.sales_system = SalesSystem(self.display, self.printer, [{'price': 10.00, 'tax': 'G', 'barcode': '777'}])
+        self.sales_system = SalesSystem(self.display, self.printer, ProductCatalogue([{'price': 10.00, 'tax': 'G', 'barcode': '777'}]))
         self.sales_system.on_barcode('777')
         self.sales_system.on_print()
         self.assertEquals(self.printer.content,
@@ -24,7 +25,7 @@ class PrintingTests(unittest.TestCase):
         products = [
             {'price': 20.00, 'tax': 'G',  'barcode': '6666'},
         ]
-        self.sales_system = SalesSystem(self.display, self.printer, products)
+        self.sales_system = SalesSystem(self.display, self.printer, ProductCatalogue(products))
         self.sales_system.on_print()
         self.assertEquals(self.printer.content,
             'Subtotal 0.00' + '\n' +
@@ -38,7 +39,7 @@ class PrintingTests(unittest.TestCase):
             {'price': 20.00, 'tax': 'G',  'barcode': '6666'},
             {'price': 10.00, 'tax': 'GP', 'barcode': '5555'}
         ]
-        self.sales_system = SalesSystem(self.display, self.printer, products)
+        self.sales_system = SalesSystem(self.display, self.printer, ProductCatalogue(products))
         self.sales_system.on_barcode('6666')
         self.sales_system.on_barcode('6666')
         self.sales_system.on_barcode('5555')
@@ -57,7 +58,7 @@ class PrintingTests(unittest.TestCase):
         products = [
             {'price': 20.00, 'tax': 'G',  'barcode': '6666'},
         ]
-        self.sales_system = SalesSystem(self.display, self.printer, products)
+        self.sales_system = SalesSystem(self.display, self.printer, ProductCatalogue(products))
         self.sales_system.on_barcode('6666')
         self.sales_system.on_print()
         self.sales_system.on_print()
