@@ -61,6 +61,7 @@ class SalesSystem(object):
             'pst'      : self.total_tax_p,
             'total'    : self.total + self.total_tax_g + self.total_tax_p
         })
+        self.reset()
 
     def on_print(self):
         lines = ''
@@ -75,7 +76,6 @@ class SalesSystem(object):
             'Total: %.02f' % (self.total + self.total_tax_g + self.total_tax_p) + '\n'
         )
         self.save_sale()
-        self.reset()
     
     def on_sales_report(self):
         return self.get_sales_report(self.get_current_datetime())

@@ -161,7 +161,6 @@ class ReportingTests(unittest.TestCase):
         sales_system = SalesSystem(display, printer, products)
         sales_system.on_barcode('6666')
         sales_system.save_sale(current_time)
-        sales_system.reset()
         self.assertEquals(sales_system.get_sales_report(current_time),
             'Sales report at %s' % current_time         + '\n' +
             '"Date", "Subtotal", "GST", "PST", "Total"' + '\n' +
@@ -180,13 +179,10 @@ class ReportingTests(unittest.TestCase):
         sales_system = SalesSystem(display, printer, products)
         sales_system.on_barcode('6666')
         sales_system.save_sale(current_time)
-        sales_system.reset()
         sales_system.on_barcode('5555')
         sales_system.save_sale(current_time)
-        sales_system.reset()
         sales_system.on_barcode('5555')
         sales_system.save_sale(current_time)
-        sales_system.reset()
         self.assertEquals(sales_system.get_sales_report(current_time),
             'Sales report at %s' % current_time         + '\n' +
             '"Date", "Subtotal", "GST", "PST", "Total"' + '\n' +
