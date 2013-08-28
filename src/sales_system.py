@@ -2,6 +2,7 @@ from datetime import datetime
 
 class Sale(object):
     def __init__(self):
+        self.datetime = None
         self.subtotal = 0
         self.gst      = 0
         self.pst      = 0
@@ -63,13 +64,8 @@ class SalesSystem(object):
     def save_sale(self, timestamp = None):
         if timestamp is None:
             timestamp = self.get_current_datetime()
-        self.sales.append({
-            'date'     : timestamp,
-            'subtotal' : self.sale.subtotal,
-            'gst'      : self.sale.gst,
-            'pst'      : self.sale.pst,
-            'total'    : self.sale.get_total()
-        })
+        self.sale.datetime = timestamp
+        self.sales.append(self.sale)
         self.reset()
 
     def on_print(self):
@@ -97,11 +93,20 @@ class SalesSystem(object):
         report = report + '"Date", "Subtotal", "GST", "PST", "Total"' + '\n'
         totals = {'subtotal': 0, 'gst': 0, 'pst': 0, 'total': 0}
         for sale in self.sales:
-            totals['subtotal'] = totals['subtotal'] + sale['subtotal']
-            totals['gst']      = totals['gst']      + sale['gst']
-            totals['pst']      = totals['pst']      + sale['pst']
-            totals['total']    = totals['total']    + sale['total']
-            report += '"%(date)s", "%(subtotal).2f", "%(gst).2f", "%(pst).2f", "%(total).2f"' % (sale) + '\n'
+            totals['subtotal'] = totals['subtotal'] + sale.subtotal
+            totals['gst']      = totals['gst']      + sale.gst
+            totals['pst']      = totals['pst']      + sale.pst
+            totals['total']    = totals['total']    + sale.get_total()
+
+            report += '"%(datetime)s", "%(subtotal).2f", "%(gst).2f", "%(pst).2f", "%(total).2f"' % (
+                {
+                    'datetime': sale.datetime,
+                    'subtotal': sale.subtotal,
+                    'gst':      sale.gst,
+                    'pst':      sale.pst,
+                    'total':    sale.get_total()
+                }
+            )  + '\n'
         
         report = report + '"Total", "%(subtotal).2f", "%(gst).2f", "%(pst).2f", "%(total).2f"' % (totals)  + '\n'
 
