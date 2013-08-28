@@ -46,12 +46,22 @@ class SalesSystem(object):
         self.display.display_total(self.total + self.total_tax_g + self.total_tax_p)
     
     def reset(self):
-        
         self.basket      = []
         self.total       = 0
         self.total_tax_g = 0
         self.total_tax_p = 0
     
+    def save_sale(self, timestamp = None):
+        if timestamp is None:
+            timestamp = self.get_current_datetime()
+        self.sales.append({
+            'date'     : timestamp,
+            'subtotal' : self.total,
+            'gst'      : self.total_tax_g,
+            'pst'      : self.total_tax_p,
+            'total'    : self.total + self.total_tax_g + self.total_tax_p
+        })
+
     def on_print(self):
         lines = ''
         for product in self.basket:
@@ -64,16 +74,14 @@ class SalesSystem(object):
             'PST %.02f' % (self.total_tax_p) + '\n' +
             'Total: %.02f' % (self.total + self.total_tax_g + self.total_tax_p) + '\n'
         )
+        self.save_sale()
         self.reset()
-
-    def save_sale(self, timestamp = datetime.now().strftime('%Y-%m-%d %H:%M')):
-        self.sales.append({
-            'date'     : timestamp,
-            'subtotal' : self.total,
-            'gst'      : self.total_tax_g,
-            'pst'      : self.total_tax_p,
-            'total'    : self.total + self.total_tax_g + self.total_tax_p
-        })
+    
+    def on_sales_report(self):
+        return self.get_sales_report(self.get_current_datetime())
+    
+    def get_current_datetime(self):
+        return datetime.now().strftime('%Y-%m-%d %H:%M')
         
     def get_sales_report(self, current_time):
         report = 'Sales report at %s' % current_time + '\n'
